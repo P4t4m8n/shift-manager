@@ -3,3 +3,6 @@ export const inputClass =
 
 export const buttonClass =
   "rounded bg-foreground px-3 py-2 text-background disabled:opacity-50";
+
+export const smallButtonClass =
+  "rounded border border-gray-300 px-2 py-1 text-sm";

@@ -51,3 +51,6 @@ export interface ScheduleEvent {
   closesSignup: boolean; // when true, workers can't sign up to shifts on this date
   createdAt: Date;
 }
+
+// Inserts don't carry an _id; reads still return it (WithId).
+export type NewDoc<T> = Omit<T, "_id">;

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { logout } from "@/app/actions/auth";
 import { requireUser } from "@/lib/dal";
 
@@ -7,6 +8,7 @@ async function UserMenu() {
   const user = await requireUser();
   return (
     <div className="flex items-center gap-3 text-sm">
+      {user.role === "admin" && <Link href="/admin">ניהול</Link>}
       <span>{user.name}</span>
       <form action={logout}>
         <button type="submit" className="underline">
