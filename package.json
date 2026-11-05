@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin": "node --env-file=.env.local scripts/seed-admin.mts"
   },
   "dependencies": {
+    "jose": "^6.2.15",
     "mongodb": "^7.8.0",
     "next": "16.4.5",
     "react": "19.3.0",

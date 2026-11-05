@@ -1,7 +1,15 @@
-import React from 'react'
+import { Suspense } from "react";
+import { requireUser } from "@/lib/dal";
+
+async function Greeting() {
+  const user = await requireUser();
+  return <p>שלום {user.name}</p>;
+}
 
 export default function HomePage() {
   return (
-    <div>HomePage</div>
-  )
+    <Suspense fallback={<p>טוען...</p>}>
+      <Greeting />
+    </Suspense>
+  );
 }

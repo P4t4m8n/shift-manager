@@ -18,8 +18,11 @@ export interface User {
   pinHash: string;
   role: UserRole;
   status: UserStatus;
+  failedPinAttempts: number;
+  lockedUntil?: Date; // login blocked until this time after too many wrong PINs
   createdAt: Date;
 }
+
 
 export interface Shift {
   _id: ObjectId;

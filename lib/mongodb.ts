@@ -34,15 +34,18 @@ const ensureIndexes = async (db: Db) =>  {
   ]);
 }
 
+// Inserts don't carry an _id; reads still return it (WithId).
+type NewDoc<T> = Omit<T, "_id">;
+
 export async function users() {
-  return (await getDb()).collection<User>("users");
+  return (await getDb()).collection<NewDoc<User>>("users");
 }
 export async function shifts() {
-  return (await getDb()).collection<Shift>("shifts");
+  return (await getDb()).collection<NewDoc<Shift>>("shifts");
 }
 export async function blocks() {
-  return (await getDb()).collection<Block>("blocks");
+  return (await getDb()).collection<NewDoc<Block>>("blocks");
 }
 export async function events() {
-  return (await getDb()).collection<ScheduleEvent>("events");
+  return (await getDb()).collection<NewDoc<ScheduleEvent>>("events");
 }
