@@ -1,4 +1,4 @@
-import type { CalendarShift } from "@/lib/interfaces";
+import type { CalendarBlock, CalendarEvent, CalendarShift } from "@/lib/interfaces";
 import {
   addDays,
   addMonths,
@@ -12,7 +12,7 @@ import {
 } from "@/lib/time";
 import type { LocalDate } from "@/lib/types";
 import type { CalendarView } from "./types/calendar.type";
-import { CALENDAR_VIEWS } from "./consts/calendar.const";
+import { CALENDAR_VIEWS, MINUTES_IN_DAY } from "./consts/calendar.const";
 
 export function parseView(value: unknown): CalendarView {
   return CALENDAR_VIEWS.find((view) => view === value) ?? "month";
@@ -72,6 +72,52 @@ export function groupByDate(shifts: CalendarShift[]) {
     );
   }
   return map;
+}
+
+export function groupEventsByDate(events: CalendarEvent[]) {
+  const map = new Map<LocalDate, CalendarEvent[]>();
+  for (const event of events) {
+    const list = map.get(event.date) ?? [];
+    list.push(event);
+    map.set(event.date, list);
+  }
+  // Events without a time come first.
+  for (const list of map.values()) {
+    list.sort((a, b) => (a.startTime ?? "").localeCompare(b.startTime ?? ""));
+  }
+  return map;
+}
+
+export interface BlockSegment {
+  block: CalendarBlock;
+  startMinute: number;
+  endMinute: number;
+}
+
+// The part of each block that falls on `date` (blocks can span several days).
+export function blockSegments(
+  blocks: CalendarBlock[],
+  date: LocalDate,
+): BlockSegment[] {
+  const segments: BlockSegment[] = [];
+  for (const block of blocks) {
+    const startDate = block.startAt.slice(0, 10);
+    const endDate = block.endAt.slice(0, 10);
+    if (date < startDate || date > endDate) continue;
+
+    const startMinute =
+      date === startDate ? toMinutes(block.startAt.slice(11)) : 0;
+    const endMinute =
+      date === endDate ? toMinutes(block.endAt.slice(11)) : MINUTES_IN_DAY;
+    if (endMinute > startMinute) segments.push({ block, startMinute, endMinute });
+  }
+  return segments.sort((a, b) => a.startMinute - b.startMinute);
+}
+
+export function coversWholeDay(segments: BlockSegment[]): boolean {
+  return segments.some(
+    (segment) => segment.startMinute === 0 && segment.endMinute === MINUTES_IN_DAY,
+  );
 }
 
 // Hours shown in the week/day grid: at least 08:00-18:00, widened to fit every shift.

@@ -1,7 +1,8 @@
 import { TIMEZONE } from "@/lib/config";
-import type { LocalDate } from "@/lib/types";
+import type { LocalDate, LocalDateTime } from "@/lib/types";
 
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 // Dates are plain "YYYY-MM-DD" strings; arithmetic goes through UTC so the machine's timezone can't shift a day.
 function toUtc(date: LocalDate) {
@@ -15,6 +16,10 @@ function fromUtc(date: Date): LocalDate {
 
 export function isValidDate(value: string): boolean {
   return DATE_REGEX.test(value) && fromUtc(toUtc(value)) === value;
+}
+
+export function isValidTime(value: string): boolean {
+  return TIME_REGEX.test(value);
 }
 
 export function todayInIsrael(): LocalDate {
@@ -90,4 +95,18 @@ export function addMonths(date: LocalDate, months: number): LocalDate {
 export function toMinutes(time: string): number {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
+}
+
+export function formatMinutes(minutes: number): string {
+  const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
+  const rest = String(minutes % 60).padStart(2, "0");
+  return `${hours}:${rest}`;
+}
+
+// "2026-11-05T09:00" shifted by 7 days -> "2026-11-12T09:00"
+export function addDaysToDateTime(
+  dateTime: LocalDateTime,
+  days: number,
+): LocalDateTime {
+  return `${addDays(dateTime.slice(0, 10), days)}${dateTime.slice(10)}`;
 }

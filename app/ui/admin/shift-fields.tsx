@@ -1,5 +1,5 @@
 import { buttonClass, inputClass, smallButtonClass } from "@/app/ui/styles";
-import type { ShiftFormState, ShiftFormValues } from "@/lib/interfaces";
+import type { FormResult, ShiftFormValues } from "@/lib/interfaces";
 
 export function TimeFields({
   values,
@@ -52,7 +52,7 @@ export function FormFooter({
   submitLabel,
   onCancel,
 }: {
-  state: ShiftFormState;
+  state: FormResult<unknown>;
   pending: boolean;
   submitLabel: string;
   onCancel: () => void;

@@ -5,7 +5,11 @@ import { TimeGrid } from "@/app/ui/calendar/time-grid";
 import { visibleDays } from "@/lib/calendar";
 import { CalendarView } from "@/lib/types/calendar.type";
 
-import type { CalendarShift } from "@/lib/interfaces";
+import type {
+  CalendarBlock,
+  CalendarEvent,
+  CalendarShift,
+} from "@/lib/interfaces";
 import type { LocalDate } from "@/lib/types";
 
 interface CalendarProps {
@@ -14,8 +18,12 @@ interface CalendarProps {
   date: LocalDate;
   today: LocalDate;
   shifts: CalendarShift[];
-  onSlotClick: (date: LocalDate, startTime?: string) => void;
+  blocks: CalendarBlock[];
+  events: CalendarEvent[];
+  onSlotClick?: (date: LocalDate, startTime?: string) => void;
   onShiftClick: (shift: CalendarShift) => void;
+  onBlockClick?: (block: CalendarBlock) => void;
+  onEventClick?: (event: CalendarEvent) => void;
 }
 // Reusable display: the admin and (later) worker screens plug in their own click handlers.
 export function Calendar({
@@ -24,8 +32,12 @@ export function Calendar({
   date,
   today,
   shifts,
+  blocks,
+  events,
   onSlotClick,
   onShiftClick,
+  onBlockClick,
+  onEventClick,
 }: CalendarProps) {
   const days = visibleDays(view, date);
 
@@ -37,8 +49,12 @@ export function Calendar({
         monthPrefix={date.slice(0, 7)}
         today={today}
         shifts={shifts}
+        blocks={blocks}
+        events={events}
         onDayClick={onSlotClick}
         onShiftClick={onShiftClick}
+        onBlockClick={onBlockClick}
+        onEventClick={onEventClick}
       />
     );
   }
@@ -49,8 +65,12 @@ export function Calendar({
       days={days}
       today={today}
       shifts={shifts}
+      blocks={blocks}
+      events={events}
       onSlotClick={onSlotClick}
       onShiftClick={onShiftClick}
+      onBlockClick={onBlockClick}
+      onEventClick={onEventClick}
     />
   );
 }

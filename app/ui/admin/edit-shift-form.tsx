@@ -2,19 +2,22 @@
 
 import { useActionState, useEffect } from "react";
 import { deleteShift, updateShift } from "@/app/actions/shifts";
+import { DeleteItemForm } from "@/app/ui/admin/delete-item-form";
 import { FormFooter, TimeFields } from "@/app/ui/admin/shift-fields";
-import { inputClass, smallButtonClass } from "@/app/ui/styles";
+import { inputClass } from "@/app/ui/styles";
 import type { CalendarShift } from "@/lib/interfaces";
+
+interface EditShiftFormProps {
+  shift: CalendarShift;
+  onDone: () => void;
+  onCancel: () => void;
+}
 
 export function EditShiftForm({
   shift,
   onDone,
   onCancel,
-}: {
-  shift: CalendarShift;
-  onDone: () => void;
-  onCancel: () => void;
-}) {
+}: EditShiftFormProps) {
   const [state, action, pending] = useActionState(
     updateShift.bind(null, shift.id),
     {},
@@ -60,20 +63,12 @@ export function EditShiftForm({
         />
       </form>
 
-      <form
-        action={async () => {
-          await deleteShift(shift.id);
-          onDone();
-        }}
-        onSubmit={(event) => {
-          if (!confirm(confirmMessage)) event.preventDefault();
-        }}
-        className="border-t border-gray-200 pt-3"
-      >
-        <button type="submit" className={smallButtonClass}>
-          מחיקת המשמרת
-        </button>
-      </form>
+      <DeleteItemForm
+        action={deleteShift.bind(null, shift.id)}
+        label="מחיקת המשמרת"
+        confirmMessage={confirmMessage}
+        onDone={onDone}
+      />
     </div>
   );
 }

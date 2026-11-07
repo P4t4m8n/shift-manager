@@ -8,17 +8,13 @@ import type { ShiftFormState } from "@/lib/interfaces";
 import { SERVER_ERROR } from "@/lib/messages";
 import { shifts } from "@/lib/mongodb";
 import {
-  MAX_REPEAT_WEEKS,
-  echoValues,
-  overlaps,
-  parseShiftFields,
-} from "@/lib/shifts";
-import {
-  addDays,
-  formatDayMonth,
-  isValidDate,
-  startOfWeek,
-} from "@/lib/time";
+  REPEAT_WEEKS_ERROR,
+  expandDates,
+  parseRepeatWeeks,
+  parseWeekDays,
+} from "@/lib/repeat";
+import { echoValues, overlaps, parseShiftFields } from "@/lib/shifts";
+import { formatDayMonth, isValidDate } from "@/lib/time";
 
 // Create the same shift on several days of a week, optionally repeated for N weeks.
 export async function createShifts(
@@ -30,31 +26,17 @@ export async function createShifts(
 
   const weekStart = field(formData, "weekStart");
   const parsed = parseShiftFields(formData);
-  const days = [...new Set(formData.getAll("days").map(Number))]
-    .filter((day) => Number.isInteger(day) && day >= 0 && day <= 6)
-    .sort((a, b) => a - b);
-  const repeatWeeks = Number(field(formData, "repeatWeeks") || 1);
+  const days = parseWeekDays(formData);
+  const repeatWeeks = parseRepeatWeeks(formData);
 
   if (!isValidDate(weekStart)) return { message: "תאריך לא תקין", values };
   if ("error" in parsed) return { message: parsed.error, values };
   if (days.length === 0) {
     return { message: "יש לבחור לפחות יום אחד", values };
   }
-  if (
-    !Number.isInteger(repeatWeeks) ||
-    repeatWeeks < 1 ||
-    repeatWeeks > MAX_REPEAT_WEEKS
-  ) {
-    return {
-      message: `מספר השבועות חייב להיות בין 1 ל-${MAX_REPEAT_WEEKS}`,
-      values,
-    };
-  }
+  if (repeatWeeks === null) return { message: REPEAT_WEEKS_ERROR, values };
 
-  const firstDay = startOfWeek(weekStart);
-  const dates = Array.from({ length: repeatWeeks }, (_, week) =>
-    days.map((day) => addDays(firstDay, week * 7 + day)),
-  ).flat();
+  const dates = expandDates(weekStart, days, repeatWeeks);
 
   try {
     const collection = await shifts();

@@ -1,11 +1,9 @@
 import { field } from "@/lib/form";
 import type { ShiftFormValues } from "@/lib/interfaces";
+import { isValidTime } from "@/lib/time";
 import type { LocalTime } from "@/lib/types";
 
-const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
-
 export const MAX_LABEL_LENGTH = 50;
-export const MAX_REPEAT_WEEKS = 12;
 
 export interface ShiftFields {
   startTime: LocalTime;
@@ -20,7 +18,7 @@ export function parseShiftFields(
   const endTime = field(formData, "endTime");
   const label = field(formData, "label");
 
-  if (!TIME_REGEX.test(startTime) || !TIME_REGEX.test(endTime)) {
+  if (!isValidTime(startTime) || !isValidTime(endTime)) {
     return { error: "יש להזין שעת התחלה ושעת סיום" };
   }
   if (endTime <= startTime) {
