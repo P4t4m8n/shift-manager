@@ -11,14 +11,10 @@ import {
   type SessionPayload,
 } from "@/lib/session";
 import type { FormState } from "@/lib/interfaces";
+import { field } from "@/lib/form";
+import { SERVER_ERROR } from "@/lib/messages";
 
 const INVALID_CREDENTIALS = "מספר טלפון או קוד שגויים";
-const SERVER_ERROR = "אירעה שגיאה, נסה שוב מאוחר יותר";
-
-const field = (formData: FormData, name: string) => {
-  const value = formData.get(name);
-  return typeof value === "string" ? value.trim() : "";
-};
 
 type Registration = { name: string; phone: string; pin: string };
 
