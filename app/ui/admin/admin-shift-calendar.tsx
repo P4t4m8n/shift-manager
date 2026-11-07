@@ -7,10 +7,11 @@ import { Modal } from "@/app/ui/admin/modal";
 import { Calendar } from "@/app/ui/calendar/calendar";
 import { CalendarToolbar } from "@/app/ui/calendar/calendar-toolbar";
 import { smallButtonClass } from "@/app/ui/styles";
-import type { CalendarView } from "@/lib/calendar";
-import type { CalendarShift } from "@/lib/interfaces";
 import { formatFullDate } from "@/lib/time";
+
+import type { CalendarShift } from "@/lib/interfaces";
 import type { LocalDate } from "@/lib/types";
+import type { CalendarView } from "@/lib/types/calendar.type";
 
 const BASE_PATH = "/admin/shifts";
 
@@ -18,17 +19,19 @@ type DialogState =
   | { kind: "create"; date: LocalDate; startTime?: string }
   | { kind: "edit"; shiftId: string };
 
+interface AdminShiftCalendarProps {
+  view: CalendarView;
+  date: LocalDate;
+  today: LocalDate;
+  shifts: CalendarShift[];
+}
+
 export function AdminShiftCalendar({
   view,
   date,
   today,
   shifts,
-}: {
-  view: CalendarView;
-  date: LocalDate;
-  today: LocalDate;
-  shifts: CalendarShift[];
-}) {
+}: AdminShiftCalendarProps) {
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const close = useCallback(() => setDialog(null), []);
 
@@ -37,6 +40,17 @@ export function AdminShiftCalendar({
       ? shifts.find((shift) => shift.id === dialog.shiftId)
       : undefined;
 
+  const calendatToolBarButtonACtion = () =>
+    setDialog({
+      kind: "create",
+      date: view === "month" ? today : date,
+    });
+
+  const onSlotClick = (slotDate: LocalDate, startTime?: string) =>
+    setDialog({ kind: "create", date: slotDate, startTime });
+
+  const onShiftClick = (shiftId: string) =>
+    setDialog({ kind: "edit", shiftId });
   return (
     <div className="flex flex-col gap-3">
       <CalendarToolbar
@@ -48,9 +62,7 @@ export function AdminShiftCalendar({
           <button
             type="button"
             className={smallButtonClass}
-            onClick={() =>
-              setDialog({ kind: "create", date: view === "month" ? today : date })
-            }
+            onClick={calendatToolBarButtonACtion}
           >
             + משמרת
           </button>
@@ -63,10 +75,8 @@ export function AdminShiftCalendar({
         date={date}
         today={today}
         shifts={shifts}
-        onSlotClick={(slotDate, startTime) =>
-          setDialog({ kind: "create", date: slotDate, startTime })
-        }
-        onShiftClick={(shift) => setDialog({ kind: "edit", shiftId: shift.id })}
+        onSlotClick={onSlotClick}
+        onShiftClick={(shift) => onShiftClick(shift.id)}
       />
 
       {dialog?.kind === "create" && (

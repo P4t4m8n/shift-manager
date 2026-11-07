@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { requireUser } from "@/lib/dal";
 
+
+// Component here for the suspense boundary
 async function Greeting() {
   const user = await requireUser();
   return <p>שלום {user.name}</p>;

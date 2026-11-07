@@ -2,6 +2,14 @@
 
 import type { CalendarShift } from "@/lib/interfaces";
 
+interface ShiftChipProps {
+  shift: CalendarShift;
+  onClick: (shift: CalendarShift) => void;
+  className?: string;
+  style?: React.CSSProperties;
+  showDetails?: boolean;
+}
+
 // A shift shown inside the calendar. Clicking it is handled by the parent.
 export function ShiftChip({
   shift,
@@ -9,13 +17,7 @@ export function ShiftChip({
   className = "",
   style,
   showDetails = false,
-}: {
-  shift: CalendarShift;
-  onClick: (shift: CalendarShift) => void;
-  className?: string;
-  style?: React.CSSProperties;
-  showDetails?: boolean;
-}) {
+}: ShiftChipProps) {
   const range = `${shift.startTime}–${shift.endTime}`;
   const title = [range, shift.label, `${shift.workerCount} עובדים`]
     .filter(Boolean)

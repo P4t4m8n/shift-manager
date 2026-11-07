@@ -2,10 +2,21 @@
 
 import { MonthGrid } from "@/app/ui/calendar/month-grid";
 import { TimeGrid } from "@/app/ui/calendar/time-grid";
-import { visibleDays, type CalendarView } from "@/lib/calendar";
+import { visibleDays } from "@/lib/calendar";
+import { CalendarView } from "@/lib/types/calendar.type";
+
 import type { CalendarShift } from "@/lib/interfaces";
 import type { LocalDate } from "@/lib/types";
 
+interface CalendarProps {
+  basePath: string;
+  view: CalendarView;
+  date: LocalDate;
+  today: LocalDate;
+  shifts: CalendarShift[];
+  onSlotClick: (date: LocalDate, startTime?: string) => void;
+  onShiftClick: (shift: CalendarShift) => void;
+}
 // Reusable display: the admin and (later) worker screens plug in their own click handlers.
 export function Calendar({
   basePath,
@@ -15,15 +26,7 @@ export function Calendar({
   shifts,
   onSlotClick,
   onShiftClick,
-}: {
-  basePath: string;
-  view: CalendarView;
-  date: LocalDate;
-  today: LocalDate;
-  shifts: CalendarShift[];
-  onSlotClick: (date: LocalDate, startTime?: string) => void;
-  onShiftClick: (shift: CalendarShift) => void;
-}) {
+}: CalendarProps) {
   const days = visibleDays(view, date);
 
   if (view === "month") {

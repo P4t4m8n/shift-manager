@@ -5,11 +5,12 @@ import { shifts } from "@/lib/mongodb";
 import { todayInIsrael } from "@/lib/time";
 
 // Reads cookies/search params/DB/clock, so the page must render it inside <Suspense>.
+interface AdminCalendarContentProps {
+  searchParams: Promise<{ view?: string | string[]; date?: string | string[] }>;
+}
 export async function AdminCalendarContent({
   searchParams,
-}: {
-  searchParams: Promise<{ view?: string | string[]; date?: string | string[] }>;
-}) {
+}: AdminCalendarContentProps) {
   await requireAdmin();
   const params = await searchParams;
   const view = parseView(params.view);
@@ -20,6 +21,7 @@ export async function AdminCalendarContent({
   const docs = await collection
     .find({ date: { $gte: days[0], $lte: days[days.length - 1] } })
     .toArray();
+
 
   return (
     <AdminShiftCalendar

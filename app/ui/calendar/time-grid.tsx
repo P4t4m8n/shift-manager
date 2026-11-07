@@ -16,6 +16,15 @@ const HOUR_PX = 56;
 const MIN_SHIFT_PX = 22;
 const LINE_COLOR = "rgb(229 231 235)";
 
+interface TimeGridProps {
+  basePath: string;
+  days: LocalDate[];
+  today: LocalDate;
+  shifts: CalendarShift[];
+  onSlotClick: (date: LocalDate, startTime?: string) => void;
+  onShiftClick: (shift: CalendarShift) => void;
+}
+
 // Used for both the week view (7 columns) and the day view (1 column).
 export function TimeGrid({
   basePath,
@@ -24,14 +33,7 @@ export function TimeGrid({
   shifts,
   onSlotClick,
   onShiftClick,
-}: {
-  basePath: string;
-  days: LocalDate[];
-  today: LocalDate;
-  shifts: CalendarShift[];
-  onSlotClick: (date: LocalDate, startTime?: string) => void;
-  onShiftClick: (shift: CalendarShift) => void;
-}) {
+}: TimeGridProps) {
   const byDate = groupByDate(shifts);
   const { startHour, endHour } = hourRange(shifts);
   const hours = Array.from(
@@ -72,7 +74,7 @@ export function TimeGrid({
             <span
               key={hour}
               dir="ltr"
-              className="absolute end-1 -translate-y-1/2 text-xs text-gray-500"
+              className="absolute inset-e-1 -translate-y-1/2 text-xs text-gray-500"
               style={{
                 top: (hour - startHour) * HOUR_PX,
                 display: hour === startHour ? "none" : undefined,
@@ -109,27 +111,26 @@ export function TimeGrid({
                 onSlotClick(date, `${String(hour).padStart(2, "0")}:00`);
               }}
             />
-            {layoutDay(byDate.get(date) ?? []).map(
-              ({ shift, lane, lanes }) => {
-                const start = toMinutes(shift.startTime) - startHour * 60;
-                const length = toMinutes(shift.endTime) - toMinutes(shift.startTime);
-                return (
-                  <ShiftChip
-                    key={shift.id}
-                    shift={shift}
-                    onClick={onShiftClick}
-                    showDetails
-                    className="absolute"
-                    style={{
-                      top: (start / 60) * HOUR_PX,
-                      height: Math.max(MIN_SHIFT_PX, (length / 60) * HOUR_PX - 2),
-                      insetInlineStart: `${(lane / lanes) * 100}%`,
-                      width: `${100 / lanes}%`,
-                    }}
-                  />
-                );
-              },
-            )}
+            {layoutDay(byDate.get(date) ?? []).map(({ shift, lane, lanes }) => {
+              const start = toMinutes(shift.startTime) - startHour * 60;
+              const length =
+                toMinutes(shift.endTime) - toMinutes(shift.startTime);
+              return (
+                <ShiftChip
+                  key={shift.id}
+                  shift={shift}
+                  onClick={onShiftClick}
+                  showDetails
+                  className="absolute"
+                  style={{
+                    top: (start / 60) * HOUR_PX,
+                    height: Math.max(MIN_SHIFT_PX, (length / 60) * HOUR_PX - 2),
+                    insetInlineStart: `${(lane / lanes) * 100}%`,
+                    width: `${100 / lanes}%`,
+                  }}
+                />
+              );
+            })}
           </div>
         ))}
       </div>

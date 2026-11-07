@@ -11,15 +11,8 @@ import {
   weekDays,
 } from "@/lib/time";
 import type { LocalDate } from "@/lib/types";
-
-export const CALENDAR_VIEWS = ["month", "week", "day"] as const;
-export type CalendarView = (typeof CALENDAR_VIEWS)[number];
-
-export const VIEW_LABEL: Record<CalendarView, string> = {
-  month: "חודש",
-  week: "שבוע",
-  day: "יום",
-};
+import type { CalendarView } from "./types/calendar.type";
+import { CALENDAR_VIEWS } from "./consts/calendar.const";
 
 export function parseView(value: unknown): CalendarView {
   return CALENDAR_VIEWS.find((view) => view === value) ?? "month";
@@ -86,7 +79,10 @@ export function hourRange(shifts: CalendarShift[]) {
   let startHour = 8;
   let endHour = 18;
   for (const shift of shifts) {
-    startHour = Math.min(startHour, Math.floor(toMinutes(shift.startTime) / 60));
+    startHour = Math.min(
+      startHour,
+      Math.floor(toMinutes(shift.startTime) / 60),
+    );
     endHour = Math.max(endHour, Math.ceil(toMinutes(shift.endTime) / 60));
   }
   return { startHour, endHour };
