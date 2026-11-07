@@ -49,6 +49,10 @@ export interface CalendarShift {
   endTime: string;
   label?: string;
   workerCount: number;
+  // Only filled for the worker calendar:
+  workers?: string[]; // names of everyone signed up
+  signedUp?: boolean; // the current worker is signed up
+  blockedReason?: string; // why the current worker can't sign up
 }
 
 export interface CalendarBlock {

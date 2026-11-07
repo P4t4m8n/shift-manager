@@ -5,7 +5,7 @@ import { CreateItemTabs } from "@/app/ui/admin/create-item-tabs";
 import { EditBlockForm } from "@/app/ui/admin/edit-block-form";
 import { EditEventForm } from "@/app/ui/admin/edit-event-form";
 import { EditShiftForm } from "@/app/ui/admin/edit-shift-form";
-import { Modal } from "@/app/ui/admin/modal";
+import { Modal } from "@/app/ui/modal";
 import { Calendar } from "@/app/ui/calendar/calendar";
 import { CalendarToolbar } from "@/app/ui/calendar/calendar-toolbar";
 import { smallButtonClass } from "@/app/ui/styles";

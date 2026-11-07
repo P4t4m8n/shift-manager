@@ -28,6 +28,21 @@ export function todayInIsrael(): LocalDate {
   );
 }
 
+// "YYYY-MM-DDTHH:mm" in workplace time, comparable as a plain string with shift/block times.
+export function nowInIsrael(): LocalDateTime {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+  const get = (type: string) => parts.find((p) => p.type === type)?.value;
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
+}
+
 export function addDays(date: LocalDate, days: number): LocalDate {
   const result = toUtc(date);
   result.setUTCDate(result.getUTCDate() + days);
