@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
+
+import { useActionState } from "react";
 import { login } from "@/app/actions/auth";
 import { inputClass, buttonClass } from "@/app/ui/styles";
 
@@ -9,7 +10,7 @@ export function LoginForm() {
   const [state, action, pending] = useActionState(login, {});
 
   return (
-    <form action={action} className="flex flex-col gap-4 w-full">
+    <form action={action} className="flex  flex-col gap-4 w-full ">
       <label className="flex flex-col gap-1 text-sm">
         מספר טלפון
         <input

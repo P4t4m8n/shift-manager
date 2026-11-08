@@ -58,7 +58,7 @@ export function AdminShiftCalendar({
       ? events.find((event) => event.id === dialog.id)
       : undefined;
 
-  const calendatToolBarButtonACtion = () =>
+  const calendarToolBarButtonACtion = () =>
     setDialog({
       kind: "create",
       date: view === "month" ? today : date,
@@ -66,6 +66,15 @@ export function AdminShiftCalendar({
 
   const onSlotClick = (slotDate: LocalDate, startTime?: string) =>
     setDialog({ kind: "create", date: slotDate, startTime });
+
+  const onShiftClick = (shift: CalendarShift) =>
+    setDialog({ kind: "edit-shift", id: shift.id });
+
+  const onBlockClick = (block: CalendarBlock) =>
+    setDialog({ kind: "edit-block", id: block.id });
+
+  const onEventClick = (event: CalendarEvent) =>
+    setDialog({ kind: "edit-event", id: event.id });
 
   return (
     <div className="flex flex-col gap-3">
@@ -78,7 +87,7 @@ export function AdminShiftCalendar({
           <button
             type="button"
             className={smallButtonClass}
-            onClick={calendatToolBarButtonACtion}
+            onClick={calendarToolBarButtonACtion}
           >
             + הוספה
           </button>
@@ -94,15 +103,9 @@ export function AdminShiftCalendar({
         blocks={blocks}
         events={events}
         onSlotClick={onSlotClick}
-        onShiftClick={(shift) =>
-          setDialog({ kind: "edit-shift", id: shift.id })
-        }
-        onBlockClick={(block) =>
-          setDialog({ kind: "edit-block", id: block.id })
-        }
-        onEventClick={(event) =>
-          setDialog({ kind: "edit-event", id: event.id })
-        }
+        onShiftClick={onShiftClick}
+        onBlockClick={onBlockClick}
+        onEventClick={onEventClick}
       />
 
       {dialog?.kind === "create" && (

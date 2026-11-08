@@ -1,4 +1,3 @@
-import type { CalendarBlock, CalendarEvent, CalendarShift } from "@/lib/interfaces";
 import {
   addDays,
   addMonths,
@@ -10,22 +9,31 @@ import {
   toMinutes,
   weekDays,
 } from "@/lib/time";
-import type { LocalDate } from "@/lib/types";
-import type { CalendarView } from "./types/calendar.type";
 import { CALENDAR_VIEWS, MINUTES_IN_DAY } from "./consts/calendar.const";
 
-export function parseView(value: unknown): CalendarView {
-  return CALENDAR_VIEWS.find((view) => view === value) ?? "month";
-}
+import type {
+  CalendarBlock,
+  CalendarEvent,
+  CalendarShift,
+} from "@/lib/interfaces";
+import type { LocalDate } from "@/lib/types";
+import type { CalendarView } from "./types/calendar.type";
 
-export function parseDate(value: unknown): LocalDate {
+export const parseView = (value: unknown): CalendarView => {
+  return CALENDAR_VIEWS.find((view) => view === value) ?? "month";
+};
+
+export const parseDate = (value: unknown): LocalDate => {
   return typeof value === "string" && isValidDate(value)
     ? value
     : todayInIsrael();
-}
+};
 
 // Every day shown on screen (a month view includes the leading/trailing days of neighbouring months).
-export function visibleDays(view: CalendarView, date: LocalDate): LocalDate[] {
+export const visibleDays = (
+  view: CalendarView,
+  date: LocalDate,
+): LocalDate[] => {
   if (view === "day") return [date];
   if (view === "week") return weekDays(startOfWeek(date));
 
@@ -37,27 +45,27 @@ export function visibleDays(view: CalendarView, date: LocalDate): LocalDate[] {
     days.push(day);
   }
   return days;
-}
+};
 
-export function stepDate(
+export const stepDate = (
   view: CalendarView,
   date: LocalDate,
   direction: 1 | -1,
-): LocalDate {
+): LocalDate => {
   if (view === "day") return addDays(date, direction);
   if (view === "week") return addDays(date, 7 * direction);
   return addMonths(date, direction);
-}
+};
 
-export function calendarHref(
+export const calendarHref = (
   basePath: string,
   view: CalendarView,
   date: LocalDate,
-) {
+) => {
   return `${basePath}?view=${view}&date=${date}`;
-}
+};
 
-export function groupByDate(shifts: CalendarShift[]) {
+export const groupByDate = (shifts: CalendarShift[]) => {
   const map = new Map<LocalDate, CalendarShift[]>();
   for (const shift of shifts) {
     const list = map.get(shift.date) ?? [];
@@ -72,9 +80,9 @@ export function groupByDate(shifts: CalendarShift[]) {
     );
   }
   return map;
-}
+};
 
-export function groupEventsByDate(events: CalendarEvent[]) {
+export const groupEventsByDate = (events: CalendarEvent[]) => {
   const map = new Map<LocalDate, CalendarEvent[]>();
   for (const event of events) {
     const list = map.get(event.date) ?? [];
@@ -86,7 +94,7 @@ export function groupEventsByDate(events: CalendarEvent[]) {
     list.sort((a, b) => (a.startTime ?? "").localeCompare(b.startTime ?? ""));
   }
   return map;
-}
+};
 
 export interface BlockSegment {
   block: CalendarBlock;
@@ -95,10 +103,10 @@ export interface BlockSegment {
 }
 
 // The part of each block that falls on `date` (blocks can span several days).
-export function blockSegments(
+export const blockSegments = (
   blocks: CalendarBlock[],
   date: LocalDate,
-): BlockSegment[] {
+): BlockSegment[] => {
   const segments: BlockSegment[] = [];
   for (const block of blocks) {
     const startDate = block.startAt.slice(0, 10);
@@ -109,19 +117,21 @@ export function blockSegments(
       date === startDate ? toMinutes(block.startAt.slice(11)) : 0;
     const endMinute =
       date === endDate ? toMinutes(block.endAt.slice(11)) : MINUTES_IN_DAY;
-    if (endMinute > startMinute) segments.push({ block, startMinute, endMinute });
+    if (endMinute > startMinute)
+      segments.push({ block, startMinute, endMinute });
   }
   return segments.sort((a, b) => a.startMinute - b.startMinute);
-}
+};
 
-export function coversWholeDay(segments: BlockSegment[]): boolean {
+export const coversWholeDay = (segments: BlockSegment[]): boolean => {
   return segments.some(
-    (segment) => segment.startMinute === 0 && segment.endMinute === MINUTES_IN_DAY,
+    (segment) =>
+      segment.startMinute === 0 && segment.endMinute === MINUTES_IN_DAY,
   );
-}
+};
 
 // Hours shown in the week/day grid: at least 08:00-18:00, widened to fit every shift.
-export function hourRange(shifts: CalendarShift[]) {
+export const hourRange = (shifts: CalendarShift[]) => {
   let startHour = 8;
   let endHour = 18;
   for (const shift of shifts) {
@@ -132,7 +142,7 @@ export function hourRange(shifts: CalendarShift[]) {
     endHour = Math.max(endHour, Math.ceil(toMinutes(shift.endTime) / 60));
   }
   return { startHour, endHour };
-}
+};
 
 export interface PositionedShift {
   shift: CalendarShift;
@@ -141,7 +151,7 @@ export interface PositionedShift {
 }
 
 // Places overlapping shifts side by side instead of on top of each other.
-export function layoutDay(shifts: CalendarShift[]): PositionedShift[] {
+export const layoutDay = (shifts: CalendarShift[]): PositionedShift[] => {
   const sorted = [...shifts].sort(
     (a, b) =>
       a.startTime.localeCompare(b.startTime) ||
@@ -176,4 +186,4 @@ export function layoutDay(shifts: CalendarShift[]): PositionedShift[] {
   }
   flush();
   return result;
-}
+};

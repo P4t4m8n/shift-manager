@@ -10,8 +10,10 @@ async function RedirectIfSignedIn() {
 
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
-    <main className="flex flex-col flex-1 items-center justify-center p-4">
-      {children}
+    <main className="flex flex-col flex-1 items-center justify-center ">
+      <div className="flex flex-col gap-4 w-full max-w-xs border rounded p-4">
+        {children}
+      </div>
       <Suspense fallback={null}>
         <RedirectIfSignedIn />
       </Suspense>

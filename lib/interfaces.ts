@@ -69,3 +69,9 @@ export interface CalendarEvent {
   startTime?: string;
   closesSignup: boolean;
 }
+
+export interface CalendarData {
+  shifts: CalendarShift[];
+  blocks: CalendarBlock[];
+  events: CalendarEvent[];
+}

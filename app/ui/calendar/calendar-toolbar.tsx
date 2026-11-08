@@ -73,25 +73,27 @@ const CalendarToolbarNav = ({
   date,
   today,
 }: CalendarToolbarNavProps) => {
+  const links = [
+    {
+      label: "הקודם",
+      href: calendarHref(basePath, view, stepDate(view, date, -1)),
+    },
+    {
+      label: "הבא",
+      href: calendarHref(basePath, view, stepDate(view, date, 1)),
+    },
+    {
+      label: "היום",
+      href: calendarHref(basePath, view, today),
+    },
+  ];
   return (
     <nav className="flex items-center gap-2">
-      <Link
-        href={calendarHref(basePath, view, stepDate(view, date, -1))}
-        className={linkClass}
-        aria-label="הקודם"
-      >
-        →
-      </Link>
-      <Link
-        href={calendarHref(basePath, view, stepDate(view, date, 1))}
-        className={linkClass}
-        aria-label="הבא"
-      >
-        ←
-      </Link>
-      <Link href={calendarHref(basePath, view, today)} className={linkClass}>
-        היום
-      </Link>
+      {links.map((link) => (
+        <Link key={link.label} href={link.href} className={linkClass}>
+          {link.label}
+        </Link>
+      ))}
     </nav>
   );
 };
